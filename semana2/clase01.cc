@@ -14,9 +14,14 @@
     1. Generación del cupón con letras personalizadas y un número aleatorio entre 100 y 999.
     Escribir una funcion que genere cupones de premios el cual debe estar compuesto por letras ingresadas por el usuario y valores numéricos en
     el rango de (100-999).
+
+    2. Verificacion de premio del cupon
+    Escribir una funcion que permita recibir el identificar del cupon y asignar si tiene premio segun si es el numero aleatorio generado tomar
+    cuenta lo siguiente, si es par o impar y asignar la cadena de texto tiene premio o no tiene premio.
 */
 
 std::string GenerarCuponAleatorio(std::string letrasPersonalizadas);
+void VerificacionDePremioDelCupon(std::string cupon);
 
 int main()
 {
@@ -31,6 +36,10 @@ int main()
 
     //Se imprime el cupon generado
     std::cout << "El cupon generado es " << cupon << "\n";
+
+    //Funcion de verificacion si tiene premio
+    VerificacionDePremioDelCupon(cupon);
+
     std::cout << "Tenga un feliz dia.\n"; 
 
     return 0;
@@ -51,4 +60,18 @@ std::string GenerarCuponAleatorio(std::string prefijo)
 
     //SE retorna el cupon
     return cupon;
+}
+
+void VerificacionDePremioDelCupon(std::string cupon){
+    //Extraer la parte numerica del cupon AGO 108
+    std::string num_extraido = cupon.substr(3,3);
+    //CONVERTIR DE ENTERO A STRING
+    int num = stoi(num_extraido);
+    //VERIFICAR
+    if((num % 2) == 0){
+        std::cout << "Tienes premio felicidad! \n";
+    }
+    else{
+        std::cout << "No tienes premio :( \n";
+    }
 }
