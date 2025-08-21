@@ -21,15 +21,16 @@
 */
 
 std::string GenerarCuponAleatorio(std::string letrasPersonalizadas);
+std::string VerificacionDeLongitud();
 void VerificacionDePremioDelCupon(std::string cupon);
 
 int main()
 {
     //Declaracion de las variables
-    std::string prefijo, cupon;
-    //Solicitud de prefijo
-    std::cout << "Bienvenido al programa para generar cupon aleatorio, agregue el prefijo: ";
-    std::cin >> prefijo;
+    std::string prefijo;
+    std::string cupon;
+    
+    prefijo = VerificacionDeLongitud();
 
     //Se llama la funcion y se guarda lo retornado
     cupon = GenerarCuponAleatorio(prefijo);
@@ -53,7 +54,7 @@ std::string GenerarCuponAleatorio(std::string prefijo)
     // Para que ocupe el tiempo de la maquina para asi no se ponga siempre la misma
     srand(time(0));
     // Se coloca de esta forma para que este del rango del 100 al 999
-    int random = 100 + (rand() % 999);
+    int random = 100 + (rand() % 900);
 
     //Concatenar el prefijo y el numero aleatorio
     cupon = prefijo + std::to_string(random);
@@ -73,5 +74,22 @@ void VerificacionDePremioDelCupon(std::string cupon){
     }
     else{
         std::cout << "No tienes premio :( \n";
+    }
+}
+
+std::string VerificacionDeLongitud(){
+    std::string prefijo;
+    //Solicitud de prefijo
+    std::cout << "Bienvenido al programa para generar cupon aleatorio, agregue el prefijo: ";
+    std::cin >> prefijo;
+
+    //VALIDAR SI TIENE 3 LETRAS O No
+    if (prefijo.length() != 3)
+    {
+        std::cout << "El prefijo no tiene 3 letras, no cumple con lo solicitado, porfavor vuelva a intentarlo. \n";
+        return VerificacionDeLongitud();
+    }
+    else{
+        return prefijo;
     }
 }
