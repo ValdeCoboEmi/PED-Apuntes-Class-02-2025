@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime> // time()
+#include <vector>
 
 // EJjercicio de funciones con y sin parametro
 
@@ -26,10 +27,13 @@ void VerificacionDePremioDelCupon(std::string cupon);
 
 int main()
 {
+    // Para que ocupe el tiempo de la maquina para asi no se ponga siempre la misma
+    srand(time(0));
+
     // Declaracion de las variables
     std::string prefijo;
-    int cantidad_cupones = 10;
-    std::string cupones_generado[cantidad_cupones];
+    int cantidad_cupones = 0;
+    std::vector<std::string> cupones_generado(cantidad_cupones);
 
     // SOLICITAR LA CANT DE CUPONES A GENERAR
     std::cout << "Ingrese la cantidad de cupones que desea: ";
@@ -40,23 +44,30 @@ int main()
     for (int i = 0; i < cantidad_cupones; i++)
     {
         // Se llama la funcion y se guarda lo retornado
-        cupones_generado[i] = GenerarCuponAleatorio(VerificacionDeLongitud());
+        // cupones_generado[i] = GenerarCuponAleatorio(VerificacionDeLongitud());
+        cupones_generado.push_back(GenerarCuponAleatorio(VerificacionDeLongitud()));
     }
 
-    std::cout << "Tus "<< cantidad_cupones << " cupones generados son los siguientes: \n";
+    std::cout << std::endl;
+    std::cout << "Tus " << cantidad_cupones << " cupones generados son los siguientes: \n";
 
+    std::cout << "--------------" << std::endl;
+    
     for (int i = 0; i < cantidad_cupones; i++)
     {
-        
+
         // Se imprime el cupon generado
         std::cout << "El cupon generado es: " << cupones_generado[i] << "\n";
 
         // Funcion de verificacion si tiene premio
         VerificacionDePremioDelCupon(cupones_generado[i]);
+
+        std::cout << "--------------" << std::endl;
     }
-    
 
     std::cout << "Tenga un feliz dia.\n";
+
+    std::cout << std::endl;
 
     return 0;
 }
@@ -66,8 +77,7 @@ std::string GenerarCuponAleatorio(std::string prefijo)
     // DECLARAR VARIABLES
     std::string cupon;
     // GENERAR EL NUMERO ALEATORIO
-    // Para que ocupe el tiempo de la maquina para asi no se ponga siempre la misma
-    srand(time(0));
+
     // Se coloca de esta forma para que este del rango del 100 al 999
     int random = 100 + (rand() % 900);
 
