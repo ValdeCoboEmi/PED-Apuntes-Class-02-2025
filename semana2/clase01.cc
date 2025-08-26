@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime> // time()
 #include <vector>
+#include <utility>
 
 // EJjercicio de funciones con y sin parametro
 
@@ -21,53 +22,30 @@
     cuenta lo siguiente, si es par o impar y asignar la cadena de texto tiene premio o no tiene premio.
 */
 
+struct InformacionCupon
+{
+    int cant_cupones;
+    std::string nombre_personas;
+    std::vector<std::pair<std::string, std::string>> cupones_premio;
+};
+
 std::string GenerarCuponAleatorio(std::string letrasPersonalizadas);
 std::string VerificacionDeLongitud();
-void VerificacionDePremioDelCupon(std::string cupon);
+std::string VerificacionDePremioDelCupon(std::string cupon);
+struct InformacionCupon SolicitarDatosGenerales();
+void ImprimirDatos(std::vector<struct InformacionCupon> inf_cupones);
 
 int main()
 {
     // Para que ocupe el tiempo de la maquina para asi no se ponga siempre la misma
     srand(time(0));
 
-    // Declaracion de las variables
-    std::string prefijo;
-    int cantidad_cupones = 0;
-    std::vector<std::string> cupones_generado(cantidad_cupones);
+    // Variable de tipo Struct
+    std::vector<struct InformacionCupon> inf_cupones;
 
-    // SOLICITAR LA CANT DE CUPONES A GENERAR
-    std::cout << "Ingrese la cantidad de cupones que desea: ";
-    std::cin >> cantidad_cupones;
-
-    // ALMACENAR EN UN ARREGLO
-
-    for (int i = 0; i < cantidad_cupones; i++)
-    {
-        // Se llama la funcion y se guarda lo retornado
-        // cupones_generado[i] = GenerarCuponAleatorio(VerificacionDeLongitud());
-        cupones_generado.push_back(GenerarCuponAleatorio(VerificacionDeLongitud()));
-    }
-
-    std::cout << std::endl;
-    std::cout << "Tus " << cantidad_cupones << " cupones generados son los siguientes: \n";
-
-    std::cout << "--------------" << std::endl;
-    
-    for (int i = 0; i < cantidad_cupones; i++)
-    {
-
-        // Se imprime el cupon generado
-        std::cout << "El cupon generado es: " << cupones_generado[i] << "\n";
-
-        // Funcion de verificacion si tiene premio
-        VerificacionDePremioDelCupon(cupones_generado[i]);
-
-        std::cout << "--------------" << std::endl;
-    }
-
-    std::cout << "Tenga un feliz dia.\n";
-
-    std::cout << std::endl;
+    // Almacenar el struct en el vector inf_cupones
+    inf_cupones.push_back(SolicitarDatosGenerales());
+    ImprimirDatos(inf_cupones);
 
     return 0;
 }
@@ -88,7 +66,7 @@ std::string GenerarCuponAleatorio(std::string prefijo)
     return cupon;
 }
 
-void VerificacionDePremioDelCupon(std::string cupon)
+std::string VerificacionDePremioDelCupon(std::string cupon)
 {
     // Extraer la parte numerica del cupon AGO 108
     std::string num_extraido = cupon.substr(3, 3);
@@ -97,11 +75,11 @@ void VerificacionDePremioDelCupon(std::string cupon)
     // VERIFICAR
     if ((num % 2) == 0)
     {
-        std::cout << "Tienes premio felicidad! \n";
+        return "Tienes premio felicidad! \n";
     }
     else
     {
-        std::cout << "No tienes premio :( \n";
+        return "No tienes premio :( \n";
     }
 }
 
@@ -122,4 +100,50 @@ std::string VerificacionDeLongitud()
     {
         return prefijo;
     }
+}
+
+struct InformacionCupon SolicitarDatosGenerales()
+{
+    struct InformacionCupon cupon;
+    // SOLICITAR NOMBRE DE LA PERSONA
+    std::cout << "Ingrese el nombre de la persona: ";
+    std::cin >> cupon.nombre_personas;
+
+    // SOLICITAR LA CANT DE CUPONES A GENERAR
+    std::cout << "Ingrese la cantidad de cupones que desea: ";
+    std::cin >> cupon.cant_cupones;
+
+    // ALMACENAR EN struct
+
+    for (int i = 0; i < cupon.cant_cupones; i++)
+    {
+        // Se llama la funcion y se guarda lo retornado
+        // cupones_generado[i] = GenerarCuponAleatorio(VerificacionDeLongitud());
+        // cupon.cupones_generado.push_back(GenerarCuponAleatorio(VerificacionDeLongitud()));
+        std::string cupon_generado = GenerarCuponAleatorio(VerificacionDeLongitud());
+        cupon.cupones_premio.push_back({cupon_generado, VerificacionDePremioDelCupon(cupon_generado)});
+    }
+
+    return cupon;
+}
+
+void ImprimirDatos(std::vector<struct InformacionCupon> inf_cupones)
+{
+    for (auto cupon : inf_cupones)
+    {
+        std::cout << "\n" << std::endl;
+        std::cout << "--------------" << std::endl;
+        std::cout << "Nombre de la persona: " << cupon.nombre_personas << "\n";
+        std::cout << "Cantidad de cupones: " << cupon.cant_cupones << "\n";
+        std::cout << "--------------" << std::endl;
+
+        for (auto c : cupon.cupones_premio)
+        {
+            std::cout << "Cupon generados: " << c.first << " -- Premio: " << c.second << "\n";
+        }
+    }
+
+    std::cout << "Tenga un feliz dia.\n";
+
+    std::cout << std::endl;
 }
