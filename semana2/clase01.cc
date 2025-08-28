@@ -55,13 +55,13 @@ int main()
         inf_cupones.push_back(SolicitarDatosGenerales());
 
         // Preguntamos si quiere continuar agregando más personas
-        std::cout << "¿Desea agregar otra persona? (1 = Sí, 0 = No): ";
+        std::cout << "¿Desea agregar otra persona? (1 = Si, 0 = No): ";
         std::cin >> opcion;
 
         // Salir del bucle si la opción es 0
         if (opcion == 0)
         {
-            continuar = false; 
+            continuar = false;
         }
     } while (continuar);
 
