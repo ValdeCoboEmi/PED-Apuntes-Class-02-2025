@@ -33,6 +33,7 @@ struct Album
 
 // Declaración de funciones que se implementarán más adelante
 struct Album SolicitarDatosGenerales();
+void ImprimirDatos(std::vector<struct Album> info_albumnes);
 
 int main()
 {
@@ -53,7 +54,7 @@ int main()
         // Salir del bucle si la opción es 0
         if (opcion == 0)
         {
-            continuar = false; 
+            continuar = false;
         }
     } while (continuar);
 
@@ -99,4 +100,34 @@ struct Album SolicitarDatosGenerales()
     std::cin >> album.cantante.nacionalidad;
 
     return album;
+}
+
+void ImprimirDatos(std::vector<struct Album> info_albumnes)
+{
+    // Recorremos todos los elementos del vector de structs, es un for anidado
+    // El primer for esta con la estructura de for each, donde toma cada elemento del vector uno por uno3
+    std::cout << "\n";
+    for (auto album : info_albumnes)
+    {
+        std::cout << "--------------" << std::endl;
+
+        // Imprimimos datos generales de la persona
+        std::cout << "Nombre del cantante: " << album.cantante.nombre << "\n";
+        std::cout << "Nacionalidad del cantante: " << album.cantante.nacionalidad << "\n";
+        std::cout << "Album: " << album.nombre_album << "\n";
+        std::cout << "Anio de lanzamiento: " << album.anio_lanzamiento << "\n";
+        std::cout << "Antiguedad: " << album.antiguedad << "\n";
+        std::cout << "Canciones del albu,: \n";
+        std::cout << "--------------" << std::endl;
+
+        // Recorremos los cupones generados de tipo vector<pair>,  y mostramos cupón + el premio
+        for (auto c : album.canciones)
+        {
+            std::cout << "Numero de la cancion: " << c.second << "° -- Nombre de la cancion: " << c.first;
+        }
+        std::cout << "--------------" << std::endl;
+    }
+    // Mensaje final
+    std::cout << "Tenga un feliz dia.\n"
+              << std::endl;
 }
