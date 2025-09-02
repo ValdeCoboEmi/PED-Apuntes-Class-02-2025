@@ -1,133 +1,159 @@
 #include <iostream>
-#include <vector>  // Librería para vectores dinámicos
-#include <utility> // Librería para usar std::pair
+#include <vector>  // Para usar vectores dinámicos
+#include <utility> // Para usar std::pair
+#include <ctime>   // Para obtener el año
 
-/* Sistema de gestion de albumes musicales
-    1. Se bsuca desarrollar un programa que permita gestionar informacion relacionado con albumes musicales. Para cada album,
-    se utilizara una estructura que almacene el nombre del album, año de lanzamiento, un vector de canciones (cada una con titulo
-    y numero de cancion), y la antiguedad (edad) del album, ademas se definina una estructura anidada para los datos del cantante,
-    incluyendo su nombre y nacionalidad.
+/* Sistema de gestión de álbumes musicales
+1. Se busca desarrollar un programa que permita gestionar información relacionada con álbumes musicales.
+Cada cantante puede tener varios álbumes.
+Para cada álbum se almacena:
+        - nombre
+        - año de lanzamiento
+        - canciones (vector de pares: título + número de canción)
+        - antigüedad (años desde su lanzamiento)
+    Para cada cantante se almacena:
+        - nombre
+        - nacionalidad
+        - vector de álbumes
+    Funcion para solicitarDatos, Imprimir y calcular Antiguedad
+*/
 
-    Funciones: AL FINALIZAR CADA FUNCION UN COMMIT
-    SolicitarDatos: registrar la informacion del almun y del cantante
-    Imprimir: funcion para imprimir
-
-    CalcularAntiguedad: calcular la edad
-    */
-
-// definicion de estructura
-struct Cantante
-{
-    std::string nombre;
-    std::string nacionalidad;
-};
+// ==================== ESTRUCTURAS ====================
 
 struct Album
 {
     std::string nombre_album;
     int anio_lanzamiento;
     std::vector<std::pair<std::string, int>> canciones;
-    int antiguedad; // Edad del album fecha actual - fecha de lanzamiento
-    struct Cantante cantante;
+    int antiguedad;
 };
 
-// Declaración de funciones que se implementarán más adelante
-struct Album SolicitarDatosGenerales();
-void ImprimirDatos(std::vector<struct Album> info_albumnes);
+struct Cantante
+{
+    std::string nombre;
+    std::string nacionalidad;
+    std::vector<struct Album> albums; // Un cantante tiene varios álbumes
+};
+
+// ==================== DECLARACIÓN DE FUNCIONES ====================
+
+Cantante SolicitarDatosGenerales();
+void ImprimirDatos(std::vector<struct Cantante> info_cantantes);
+int CalcularAnios(int anio_lanzamiento);
+
+// ==================== FUNCIÓN PRINCIPAL ====================
 
 int main()
 {
-    std::vector<struct Album> info_albumnes;
+    std::vector<struct Cantante> info_cantantes;
     bool continuar = true;
     int opcion;
 
-    // Bucle para permitir ingresar múltiples albumnes, hasta que el usuario quiera
     do
     {
-        // Pedimos al usuario los datos y los almacenamos en el vector de albumnes
-        info_albumnes.push_back(SolicitarDatosGenerales());
+        // Pedimos los datos del cantante y sus álbumes
+        info_cantantes.push_back(SolicitarDatosGenerales());
 
-        // Preguntamos si quiere continuar agregando más personas
-        std::cout << "¿Desea agregar otra persona? (1 = Si, 0 = No): ";
+        std::cout << "¿Desea agregar otro cantante? (1 = Si, 0 = No): ";
         std::cin >> opcion;
 
-        // Salir del bucle si la opción es 0
         if (opcion == 0)
         {
             continuar = false;
         }
     } while (continuar);
 
+    // Mostramos todo lo registrado
+    ImprimirDatos(info_cantantes);
+
     return 0;
 }
 
-struct Album SolicitarDatosGenerales()
+// ==================== FUNCIONES ====================
+
+// Calcular la antigüedad de un álbum
+int CalcularAnios(int anio_lanzamiento)
 {
-    // creacion de la estructura de album
-    struct Album album;
-    int opcion;
-    std::string cancion;
-    int num_cancion;
-
-    // Solicitar los datos del nombre y del añio, del album
-    std::cout << "Ingrese el nombre del album: ";
-    std::cin >> album.nombre_album;
-
-    std::cout << "Ingrese el anio del album: ";
-    std::cin >> album.anio_lanzamiento;
-
-    // Proceso de guardar las canciones
-    do
-    {
-        // Solicitar
-        std::cout << "Ingrese el nombre de la cancion: ";
-        std::cin >> cancion;
-        std::cout << "Ingrese el numero de la cancion: ";
-        std::cin >> num_cancion;
-
-        album.canciones.push_back({cancion, num_cancion});
-
-        std::cout << "Desea añadir otra cancion, si (0), no (1): ";
-        std::cin >> opcion;
-
-    } while (opcion != 1);
-
-    // Solicitar los datos del cantante y almacenarlo
-    std::cout << "Ingrese el nombre del cantante: ";
-    std::cin >> album.cantante.nombre;
-
-    std::cout << "Ingrese la nacionalidad del cantante: ";
-    std::cin >> album.cantante.nacionalidad;
-
-    return album;
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    // Se le tiene que subar el 1900 porque comienza en ese año el ltm entonces
+    int year = 1900 + ltm->tm_year;
+    return year - anio_lanzamiento;
 }
 
-void ImprimirDatos(std::vector<struct Album> info_albumnes)
+// Solicitar datos de un cantante y sus álbumes
+Cantante SolicitarDatosGenerales()
 {
-    // Recorremos todos los elementos del vector de structs, es un for anidado
-    // El primer for esta con la estructura de for each, donde toma cada elemento del vector uno por uno3
-    std::cout << "\n";
-    for (auto album : info_albumnes)
+    Cantante cantante;
+    Album album;
+    int opcion, opcion_canciones;
+
+    std::cout << "\nIngrese el nombre del cantante: ";
+    std::cin >> cantante.nombre;
+
+    std::cout << "Ingrese la nacionalidad del cantante: ";
+    std::cin >> cantante.nacionalidad;
+
+    do
     {
-        std::cout << "--------------" << std::endl;
+        std::cout << "\nIngrese el nombre del album: ";
+        std::cin >> album.nombre_album;
 
-        // Imprimimos datos generales de la persona
-        std::cout << "Nombre del cantante: " << album.cantante.nombre << "\n";
-        std::cout << "Nacionalidad del cantante: " << album.cantante.nacionalidad << "\n";
-        std::cout << "Album: " << album.nombre_album << "\n";
-        std::cout << "Anio de lanzamiento: " << album.anio_lanzamiento << "\n";
-        std::cout << "Antiguedad: " << album.antiguedad << "\n";
-        std::cout << "Canciones del albu,: \n";
-        std::cout << "--------------" << std::endl;
+        std::cout << "Ingrese el anio del album: ";
+        std::cin >> album.anio_lanzamiento;
 
-        // Recorremos los cupones generados de tipo vector<pair>,  y mostramos cupón + el premio
-        for (auto c : album.canciones)
+        // Calcular antigüedad automáticamente
+        album.antiguedad = CalcularAnios(album.anio_lanzamiento);
+
+        // Agregar canciones al álbum
+        album.canciones.clear();
+        do
         {
-            std::cout << "Numero de la cancion: " << c.second << "° -- Nombre de la cancion: " << c.first;
+            std::string cancion;
+            int num_cancion;
+
+            std::cout << "Ingrese el nombre de la cancion: ";
+            std::cin >> cancion;
+            std::cout << "Ingrese el numero de la cancion: ";
+            std::cin >> num_cancion;
+
+            album.canciones.push_back({cancion, num_cancion});
+
+            std::cout << "¿Desea anadir otra cancion? (1 = Si, 0 = No): ";
+            std::cin >> opcion_canciones;
+        } while (opcion_canciones == 1);
+
+        // Guardar el álbum en el vector del cantante
+        cantante.albums.push_back(album);
+
+        std::cout << "¿Desea anadir otro album a este cantante? (1 = Si, 0 = No): ";
+        std::cin >> opcion;
+    } while (opcion == 1);
+
+    return cantante;
+}
+
+// Imprimir datos de todos los cantantes y sus álbumes
+void ImprimirDatos(std::vector<Cantante> info_cantantes)
+{
+    std::cout << "\n======= INFORMACION REGISTRADA =======\n";
+    for (auto cantante : info_cantantes)
+    {
+        std::cout << "\nCantante: " << cantante.nombre << "\n";
+        std::cout << "Nacionalidad: " << cantante.nacionalidad << "\n";
+
+        for (auto album : cantante.albums)
+        {
+            std::cout << "\n   Album: " << album.nombre_album << "\n";
+            std::cout << "   Anio de lanzamiento: " << album.anio_lanzamiento << "\n";
+            std::cout << "   Antiguedad: " << album.antiguedad << " anios\n";
+            std::cout << "   Canciones:\n";
+            for (auto c : album.canciones)
+            {
+                std::cout << "      #" << c.second << " - " << c.first << "\n";
+            }
         }
-        std::cout << "--------------" << std::endl;
+        std::cout << "-----------------------------------\n";
     }
-    // Mensaje final
-    std::cout << "Tenga un feliz dia.\n"
-              << std::endl;
+    std::cout << "=====================================\n";
 }
