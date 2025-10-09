@@ -24,6 +24,22 @@ struct Persona
     int fNac;
 };
 
+// Sobrecarga del operador << para Persona
+std::ostream& operator<<(std::ostream& os, const Persona& p) {
+    os << p.nombre << ", fecha de nacimiento: " << p.fNac;
+    return os;
+}
+
+// Sobrecarga del operador << para queue<Persona>
+std::ostream& operator<<(std::ostream& os, std::queue<Persona> q) {
+    os << "Tamaño de la cola: " << q.size() << "\n";
+    while (!q.empty()) {
+        os << q.front() << "\n";  // usa la sobrecarga de Persona
+        q.pop();
+    }
+    return os;
+}
+
 struct Persona SolicitarDatos();
 void Imprimir(std::queue<Persona> Personas);
 
