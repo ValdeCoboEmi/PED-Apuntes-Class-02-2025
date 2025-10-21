@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 struct Luchador
 {
@@ -12,13 +13,15 @@ Luchador SolicitarInformacion();
 void ImprimirDatos(const std::vector<Luchador> luchadores);
 void OrdenarPorSeleccion(std::vector<Luchador> &luchadores);
 void BusquedaPeso(const std::vector<Luchador> luchadores, float peso_a_buscar);
+bool CompararPorPeso(const Luchador &a, const Luchador &b);
 
 int main()
 {
     std::vector<Luchador> luchadores;
     bool continuar = true;
     int opcion;
-    float peso_a_buscar;
+    float peso_a_buscar = 0;
+    bool busqueda;
 
     std::cout << "\nBIENVENIDO!\n\n";
 
@@ -40,14 +43,21 @@ int main()
     std::cout << "\n\nInformacion de los Luchadores ingresados sin ordenar: \n\n";
     ImprimirDatos(luchadores);
 
-    OrdenarPorSeleccion(luchadores);
+    // OrdenarPorSeleccion(luchadores);
+    std::sort(luchadores.begin(), luchadores.end(), CompararPorPeso);
 
     std::cout << "\n\nInformacion de los Luchadores ingresados con ordenar: \n\n";
     ImprimirDatos(luchadores);
 
-    std::cout <<"\n\nIngrese el peso en lbs del luchador que quiere buscar: ";
+    std::cout << "\n\nIngrese el peso en lbs del luchador que quiere buscar: ";
     std::cin >> peso_a_buscar;
-    BusquedaPeso(luchadores, peso_a_buscar);
+    // BusquedaPeso(luchadores, peso_a_buscar);
+
+    busqueda = std::binary_search(luchadores.begin(), luchadores.end(), Luchador{"", peso_a_buscar}, CompararPorPeso);
+
+    std::cout << ((busqueda) ? "Tienes luchadores con ese peso"
+                             : "No se encontro ningun luchador")
+              << std::endl;
 
     return 0;
 }
@@ -107,10 +117,17 @@ void BusquedaPeso(const std::vector<Luchador> luchadores, float peso_a_buscar)
                       << " - Peso (lbs): " << luchador.peso << "\n";
             encontrado = true;
         }
-        else{}
+        else
+        {
+        }
     }
     if (!encontrado)
     {
         std::cout << "El luchador no fue encontrado\n";
     }
+}
+
+bool CompararPorPeso(const Luchador &a, const Luchador &b)
+{
+    return a.peso < b.peso;
 }

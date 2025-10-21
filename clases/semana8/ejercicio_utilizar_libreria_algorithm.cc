@@ -55,10 +55,10 @@ int main()
 void ordenarComidas(vector<Comidas> &Comiditas)
 {
     sort(Comiditas.begin(), Comiditas.end(),
-         [](const Comidas &a, const Comidas &b)
-         {
-             return a.calorias < b.calorias;
-         });
+        [](const Comidas &a, const Comidas &b)
+        {
+            return a.calorias < b.calorias;
+        });
 }
 
 // Imprime los elementos del vector
