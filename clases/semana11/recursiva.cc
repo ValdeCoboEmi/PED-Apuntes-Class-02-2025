@@ -46,27 +46,22 @@ int CalcularPotencia(int potencia, int n)
         return n * CalcularPotencia(potencia - 1, n);
     }
 }
-
 int VerificarPar(int n)
 {
-    if (n == 0) // n % 2 == 0
-    {
-        return 0;
-    }
+    if (n < 0)
+        n = -n; // Manejar negativos
+    if (n == 0)
+        return 0; // Es par
     else
-    {
-        return VerificarImpar(n - 2);
-    }
+        return VerificarImpar(n - 1);
 }
 
 int VerificarImpar(int n)
 {
-    if (n == 1) // n % 2 != 0
-    {
-        return 1;
-    }
+    if (n < 0)
+        n = -n; // Manejar negativos
+    if (n == 0)
+        return 1; // No es impar
     else
-    {
-        return VerificarPar(n - 2);
-    }
+        return VerificarPar(n - 1);
 }
