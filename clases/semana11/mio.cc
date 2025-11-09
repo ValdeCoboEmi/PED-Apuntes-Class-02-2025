@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 // Estructura que guarda la información de cada lenguaje
 struct Tiobe
@@ -23,59 +24,112 @@ void RecorridoInorden(Nodo *abb);
 void RecorridoPreorden(Nodo *abb);
 void RecorridoPostorden(Nodo *abb);
 Nodo *BuscarMenor(Nodo *abb);
-Nodo *BuscarMayor(Nodo *abb);
 void BuscarNodo(Nodo *&abb, float puntaje, Nodo *&padre);
 void BorrarNodo(Nodo *&abb, float puntaje_borrar);
 
+// ------------------------ MENÚ PRINCIPAL ------------------------
 int main()
 {
-    struct Nodo *abb = nullptr; // Árbol vacío al inicio
-    bool continuar = true;
+    Nodo *abb = nullptr; // Árbol vacío
+    int opcion;           // Para el menú
 
     do
     {
-        // Pedimos los datos del lenguaje
-        struct Tiobe informacion_tiobe = SolicitarDatos();
+        // Menú visual con separadores
+        std::cout << "\n=============================================\n";
+        std::cout << "        MENU PRINCIPAL - INDICE TIOBE\n";
+        std::cout << "=============================================\n";
+        std::cout << "1. Insertar nuevo lenguaje\n";
+        std::cout << "2. Mostrar recorrido INORDEN\n";
+        std::cout << "3. Mostrar recorrido PREORDEN\n";
+        std::cout << "4. Mostrar recorrido POSTORDEN\n";
+        std::cout << "5. Buscar lenguaje por puntaje\n";
+        std::cout << "6. Eliminar lenguaje por puntaje\n";
+        std::cout << "0. Salir\n";
+        std::cout << "---------------------------------------------\n";
+        std::cout << "Seleccione una opcion: ";
+        std::cin >> opcion;
 
-        // Creamos el nodo (aunque aquí no se usa directamente)
-        CrearNodo(informacion_tiobe);
+        switch (opcion)
+        {
+        case 1:
+        {
+            // Insertar un nuevo nodo
+            Tiobe nuevo = SolicitarDatos();
+            InsertarNodo(abb, nuevo);
+            std::cout << "\nLenguaje agregado correctamente.\n";
+            break;
+        }
+        case 2:
+        {
+            std::cout << "\nRecorrido INORDEN (izq - raiz - der):\n";
+            RecorridoInorden(abb);
+            std::cout << "\n";
+            break;
+        }
+        case 3:
+        {
+            std::cout << "\nRecorrido PREORDEN (raiz - izq - der):\n";
+            RecorridoPreorden(abb);
+            std::cout << "\n";
+            break;
+        }
+        case 4:
+        {
+            std::cout << "\nRecorrido POSTORDEN (izq - der - raiz):\n";
+            RecorridoPostorden(abb);
+            std::cout << "\n";
+            break;
+        }
+        case 5:
+        {
+            // Buscar por puntaje
+            float puntaje;
+            std::cout << "\nIngrese el puntaje del lenguaje a buscar: ";
+            std::cin >> puntaje;
 
-        // Insertamos el nodo en el árbol
-        InsertarNodo(abb, informacion_tiobe);
+            Nodo *padre = nullptr;
+            Nodo *aux = abb;
+            BuscarNodo(aux, puntaje, padre);
 
-        // Preguntamos si se desea seguir ingresando más datos
-        std::cout << "\nDigite la opcion para continuar ingresando o no: " << std::endl;
-        std::cout << "1. Continuar" << std::endl;
-        std::cout << "0. Salir" << std::endl;
-        std::cout << "Digite la opcion: ";
-        std::cin >> continuar;
+            if (aux)
+                std::cout << "\nLenguaje encontrado: " << aux->indice.lenguaje_programacion
+                          << " con puntaje " << aux->indice.puntaje << "\n";
+            else
+                std::cout << "\nNo se encontro ningun lenguaje con ese puntaje.\n";
 
-    } while (continuar);
+            break;
+        }
+        case 6:
+        {
+            // Eliminar por puntaje
+            float puntaje;
+            std::cout << "\nIngrese el puntaje del lenguaje a eliminar: ";
+            std::cin >> puntaje;
 
-    // Mostramos los recorridos del árbol
-    std::cout << "Recorrido in orden: \n";
-    RecorridoInorden(abb);
+            BorrarNodo(abb, puntaje);
+            std::cout << "\nSi existia, el lenguaje fue eliminado correctamente.\n";
+            break;
+        }
+        case 0:
+            std::cout << "\nSaliendo del programa...\n";
+            break;
 
-    std::cout << "\nRecorrido PostOrden: \n";
-    RecorridoPostorden(abb);
+        default:
+            std::cout << "\nOpcion no valida, intente de nuevo.\n";
+        }
 
-    std::cout << "\nRecorrido Preorden: \n";
-    RecorridoPreorden(abb);
-
-    // Borrar datos
-    BorrarNodo(abb, 15);
-
-    std::cout << "\nRecorrido in orden: \n";
-    RecorridoInorden(abb);
+    } while (opcion != 0);
 
     return 0;
 }
 
+// ---------------------------------------------------------------
 // Función para solicitar los datos de cada lenguaje
 struct Tiobe SolicitarDatos()
 {
-    struct Tiobe datos_indice;
-    std::cout << "Ingrese el lenguaje de programacion: ";
+    Tiobe datos_indice;
+    std::cout << "\nIngrese el lenguaje de programacion: ";
     std::cin >> datos_indice.lenguaje_programacion;
     std::cout << "Ingrese el puntaje: ";
     std::cin >> datos_indice.puntaje;
@@ -83,8 +137,7 @@ struct Tiobe SolicitarDatos()
 }
 
 // Crear un nuevo nodo con la información recibida
-// Se usa 'new' para que el nodo quede en memoria dinámica (heap)
-// y no se borre al salir de la función
+// Se usa 'new' para que quede guardado en memoria dinámica
 Nodo *CrearNodo(const Tiobe &informacion)
 {
     Nodo *nuevo_nodo = new Nodo;
@@ -97,14 +150,12 @@ Nodo *CrearNodo(const Tiobe &informacion)
 // Insertar un nodo dentro del árbol
 void InsertarNodo(Nodo *&abb, const Tiobe &informacion)
 {
-    // Si el árbol está vacío, el nuevo nodo será la raíz
     if (abb == nullptr)
     {
         abb = CrearNodo(informacion);
         return;
     }
 
-    // Si el puntaje es menor, va a la izquierda; si no, a la derecha
     if (informacion.puntaje < abb->indice.puntaje)
         InsertarNodo(abb->izquierdo, informacion);
     else
@@ -115,7 +166,7 @@ void InsertarNodo(Nodo *&abb, const Tiobe &informacion)
 void RecorridoInorden(Nodo *abb)
 {
     if (!abb)
-        return; // Si está vacío, no hace nada
+        return;
 
     RecorridoInorden(abb->izquierdo);
     std::cout << "[" << abb->indice.puntaje << " : " << abb->indice.lenguaje_programacion << "] ";
@@ -145,11 +196,8 @@ void RecorridoPostorden(Nodo *abb)
 }
 
 // Buscar un nodo por su puntaje
-// Se pasa el árbol completo porque no se sabe dónde está el nodo
-// 'padre' sirve para saber quién lo apunta (necesario al borrar)
 void BuscarNodo(Nodo *&abb, float puntaje, Nodo *&padre)
 {
-    // Se repite hasta que lo encuentre o llegue al final
     while (abb != nullptr && abb->indice.puntaje != puntaje)
     {
         padre = abb;
@@ -168,30 +216,17 @@ Nodo *BuscarMenor(Nodo *abb)
     return abb;
 }
 
-// Buscar el nodo con el mayor valor (más a la derecha)
-Nodo *BuscarMayor(Nodo *abb)
-{
-    while (abb && abb->derecho != nullptr)
-        abb = abb->derecho;
-    return abb;
-}
-
 // Eliminar un nodo del árbol
 void BorrarNodo(Nodo *&abb, float puntaje_borrar)
 {
     Nodo *padre = nullptr;
     Nodo *aux = abb;
-
-    // Buscamos el nodo que se quiere eliminar
-    // Aqui el padre sera el subarbol donde se encontro el dato, para poder eliminarlo y para la logica de los hijos
-    // Como esta guardado en el heap entonces siempre se obtiene el mismo, no una copia por eso la logica funciona del borrado
     BuscarNodo(aux, puntaje_borrar, padre);
 
-    // Si no existe, no hace nada
     if (!aux)
         return;
 
-    // Caso 1: el nodo es hoja (sin hijos)
+    // Caso 1: nodo hoja
     if (!aux->izquierdo && !aux->derecho)
     {
         if (aux == abb)
@@ -202,23 +237,14 @@ void BorrarNodo(Nodo *&abb, float puntaje_borrar)
             padre->derecho = nullptr;
         delete aux;
     }
-    // Caso 2: tiene dos hijos
+    // Caso 2: dos hijos
     else if (aux->izquierdo && aux->derecho)
     {
-        // Se busca el sucesor (menor del subárbol derecho)
-        // Nodo *sucesor = BuscarMenor(aux->derecho);
-        // Se copia su información en el nodo actual
-        // aux->indice = sucesor->indice;
-        // Se elimina el sucesor del subárbol derecho
-        // BorrarNodo(aux->derecho, sucesor->indice.puntaje);
-
-        // BUsqueda del mayor suucesor
-        //  Caso: nodo con dos hijos
-        Nodo *predecesor = BuscarMayor(aux->izquierdo);
-        aux->indice = predecesor->indice;
-        BorrarNodo(aux->izquierdo, predecesor->indice.puntaje);
+        Nodo *sucesor = BuscarMenor(aux->derecho);
+        aux->indice = sucesor->indice;
+        BorrarNodo(aux->derecho, sucesor->indice.puntaje);
     }
-    // Caso 3: tiene un solo hijo
+    // Caso 3: un solo hijo
     else
     {
         Nodo *hijo = (aux->izquierdo) ? aux->izquierdo : aux->derecho;
