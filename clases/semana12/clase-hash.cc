@@ -38,9 +38,9 @@ Registro SolicitarDatos();
 void Agregar(Registro r);
 int FHash(int);
 int ConversionASCII(std::string);
-Nodo *Buscar(int, int);
-void Buscar(int);
-void Eliminar(int);
+Nodo *Buscar(std::string palabra, int clave);
+void Buscar(std::string palabra);
+void Eliminar(std::string palabra);
 void Imprimir();
 
 // --- FUNCIÓN PRINCIPAL ---
@@ -92,15 +92,13 @@ int main()
         case 2:
             std::cout << "Ingrese la palabra a buscar: ";
             std::getline(std::cin, palabra);
-            valor_ascii = ConversionASCII(palabra);
-            Buscar(valor_ascii);
+            Buscar(palabra);
             break;
 
         case 3:
             std::cout << "Ingrese la palabra a eliminar: ";
             std::getline(std::cin, palabra);
-            valor_ascii = ConversionASCII(palabra);
-            Eliminar(valor_ascii);
+            Eliminar(palabra);
             break;
 
         case 4:
@@ -167,12 +165,12 @@ void Agregar(Registro r)
 }
 
 // --- BUSCAR POR VALOR ASCII ---
-Nodo *Buscar(int valor_ascii, int clave)
+Nodo *Buscar(std::string palabra, int clave)
 {
     Nodo *actual = tabla[clave];
     while (actual)
     {
-        if (actual->registro.valor_ascii == valor_ascii)
+        if (actual->registro.palabra == palabra)
             return actual;
         actual = actual->siguiente;
     }
@@ -180,10 +178,10 @@ Nodo *Buscar(int valor_ascii, int clave)
 }
 
 // --- BUSCAR PALABRA ---
-void Buscar(int valor_ascii)
+void Buscar(std::string palabra)
 {
-    int clave = FHash(valor_ascii);
-    Nodo *nodo = Buscar(valor_ascii, clave);
+    int clave = FHash(ConversionASCII(palabra));
+    Nodo *nodo = Buscar(palabra, clave);
     if (nodo)
     {
         std::cout << "Registro encontrado → Posición: " << clave
@@ -198,10 +196,10 @@ void Buscar(int valor_ascii)
 }
 
 // --- ELIMINAR PALABRA ---
-void Eliminar(int valor_ascii)
+void Eliminar(std::string palabra)
 {
-    int clave = FHash(valor_ascii);
-    Nodo *nodo = Buscar(valor_ascii, clave);
+    int clave = FHash(ConversionASCII(palabra));
+    Nodo *nodo = Buscar(palabra, clave);
 
     if (nodo)
     {
