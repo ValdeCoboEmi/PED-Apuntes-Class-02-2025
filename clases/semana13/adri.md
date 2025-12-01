@@ -165,3 +165,50 @@ for (auto it = it1; it != it2; ++it) {
 FIN DEL RESUMEN EXTRA
 =================================================================
 */
+
+// ---------------------------------------------------------
+// Mover una materia (nota) de un estudiante a otro
+// ---------------------------------------------------------
+void moverMateria(map<int, Estudiante> &alumnos) {
+    int idOrigen, idDestino;
+    string materia;
+
+    cout << "ID del estudiante ORIGEN: ";
+    cin >> idOrigen;
+
+    cout << "ID del estudiante DESTINO: ";
+    cin >> idDestino;
+
+    cout << "Nombre de la materia a mover: ";
+    cin >> materia;
+
+    // Buscar origen
+    auto itOrigen = alumnos.find(idOrigen);
+    if (itOrigen == alumnos.end()) {
+        cout << "❌ El estudiante ORIGEN no existe.\n";
+        return;
+    }
+
+    // Buscar destino
+    auto itDestino = alumnos.find(idDestino);
+    if (itDestino == alumnos.end()) {
+        cout << "❌ El estudiante DESTINO no existe.\n";
+        return;
+    }
+
+    // Verificar que la materia exista en el origen
+    auto itMateria = itOrigen->second.materias.find(materia);
+    if (itMateria == itOrigen->second.materias.end()) {
+        cout << "❌ El estudiante ORIGEN no tiene esa materia.\n";
+        return;
+    }
+
+    // Mover la materia
+    int nota = itMateria->second;
+    itDestino->second.materias[materia] = nota; // copiar
+    itOrigen->second.materias.erase(materia);   // borrar en origen
+
+    cout << "✅ Materia '" << materia 
+         << "' movida de " << idOrigen 
+         << " a " << idDestino << " correctamente.\n";
+}
