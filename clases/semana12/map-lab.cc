@@ -45,28 +45,41 @@ void agregarProducto(map<string, Producto> &inventario)
     cout << "Producto agregado.\n";
 }
 
-// version que usa operator[] para actualizar o crear
 void actualizarProducto(map<string, Producto> &inventario)
 {
     string codigo;
-    cout << "Codigo del producto a actualizar/crear: ";
+    cout << "Codigo del producto a actualizar: ";
     cin >> codigo;
 
-    // Esto crea si no existe
-    Producto &p = inventario[codigo];
+    // Buscar sin crear
+    auto it = inventario.find(codigo);
+
+    // Si no existe, mostrar mensaje y salir
+    if (it == inventario.end()) {
+        cout << "No se puede actualizar: el producto con codigo '" 
+             << codigo << "' no existe.\n";
+        return;
+    }
+
+    // Si existe, actualizar sus datos
+    Producto &p = it->second;
 
     cin.ignore();
     cout << "Nombre: ";
     getline(cin, p.nombre);
+
     cout << "Categoria: ";
     getline(cin, p.categoria);
+
     cout << "Precio: ";
     cin >> p.precio;
+
     cout << "Stock: ";
     cin >> p.stock;
 
-    cout << "Producto actualizado/creado correctamente.\n";
+    cout << "Producto actualizado correctamente.\n";
 }
+
 
 void buscarProducto(const map<string, Producto> &inventario)
 {
